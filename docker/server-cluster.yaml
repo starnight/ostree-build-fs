@@ -1,0 +1,32 @@
+version: "3"
+services:
+  web:
+    container_name: 'ostree-web'
+    image: docker.io/library/nginx:mainline-alpine-slim
+    ports:
+      - '8080:80'
+    volumes:
+      - ../nginx-default.conf:/etc/nginx/conf.d/default.conf
+      - ostreedata:/opt/repo
+
+  sshd:
+    # OStree source client can ostree-push to this sshd service
+    container_name: 'ostree-sshd'
+    build:
+      dockerfile: ssh-server.Dockerfile
+    ports:
+      - '2222:22'
+    volumes:
+      - ostreedata:/home/ostreejob/repo
+    entrypoint: ['/bin/sh', '-c']
+    # 1. Modify ostreedata's mode as '0775' to generate/write OSTree repository
+    # 2. Achive mode can be served directly by a static plain HTTP web server
+    #    https://ostreedev.github.io/ostree/formats/#the-archive-format
+    command:
+      - |
+        chmod -R 775 /home/ostreejob/repo
+        su ostreejob -c "cd ~; ostree --repo=repo --mode=archive init"
+        /usr/sbin/sshd -D
+
+volumes:
+  ostreedata:
