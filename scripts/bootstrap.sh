@@ -13,7 +13,7 @@ apk.static \
   -U \
   --allow-untrusted \
   --root $ROOT_TARGET \
-  --initdb add alpine-base mkinitfs
+  --initdb add alpine-base mkinitfs linux-lts linux-firmware-none acpi
 
 echo "Have serial console"
 PATTERN_STR='\#ttyS0::respawn:\/sbin\/getty -L ttyS0 115200 vt100'
