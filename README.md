@@ -18,7 +18,7 @@ Note: Other container tools are available, too. For example, `docker` and `docke
 
 1. Prepare the environment to build OSTree commit, including the tool `ostree-push` as a container image:
 ```shell
-$ podman build -t localhost/source-client:latest . -f docker/source-client.yaml
+$ podman build -t localhost/source-client:latest . -f docker/source-client.Dockerfile
 ```
 2. Run a container to build a new OSTree commit from the filesystem held by the local folder: `tree`, then `ostree-push` the OSTree commit to the OSTree Server side cluster:
 ```

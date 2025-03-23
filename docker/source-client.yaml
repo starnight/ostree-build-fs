@@ -1,7 +1,0 @@
-FROM docker.io/library/python:3-alpine
-
-RUN apk add --no-cache build-base cmake cairo-dev gobject-introspection-dev ostree ostree-gir openssh-client \
-    && pip install ostree-push \
-    && ssh-keygen -A
-
-CMD ["/bin/sh"]

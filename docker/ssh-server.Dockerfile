@@ -1,7 +1,8 @@
-FROM docker.io/library/python:3-alpine
+FROM docker.io/library/alpine:edge
 
-RUN apk add --no-cache build-base cmake cairo-dev gobject-introspection-dev ostree ostree-gir openssh-server \
-    && pip install ostree-push \
+RUN head -n 1 /etc/apk/repositories | sed -e 's/main$/testing/' >> /etc/apk/repositories \
+    && apk update \
+    && apk add --no-cache ostree ostree-push openssh-server \
     && ssh-keygen -A \
     && adduser -G root ostreejob -D \
     && echo ostreejob:ostreejob | chpasswd \
