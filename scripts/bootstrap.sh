@@ -1,19 +1,37 @@
 #!/bin/sh
 
-ROOT_TARGET=$1
+ROOT_TARGET="target/"
+BOOTSTRAP_PACKAGES_FILE="bootstrap.packages"
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --root-target)
+            ROOT_TARGET="$2"
+            shift 2  # Move past the option and its value
+            ;;
+        --bootstrap-package-file)
+            BOOTSTRAP_PACKAGES_FILE="$2"
+            shift 2
+            ;;
+        *)
+            echo "Error: Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
 
 cat /etc/os-release
 
-APK_REPO_URL=$(head -n 1 /etc/apk/repositories)
+APK_REPO_URL=$(cat /etc/apk/repositories | sed -e "s/^/-X /g" | tr '\n' ' ')
 
 apk add apk-tools-static
 apk.static \
   --arch $(uname -m) \
-  -X $APK_REPO_URL \
+  $APK_REPO_URL \
   -U \
   --allow-untrusted \
   --root $ROOT_TARGET \
-  --initdb add alpine-base mkinitfs linux-lts linux-firmware-none acpi
+  --initdb add $(cat ${BOOTSTRAP_PACKAGES_FILE} | tr '\n' ' ')
 
 echo "Have serial console"
 PATTERN_STR='\#ttyS0::respawn:\/sbin\/getty -L ttyS0 115200 vt100'
