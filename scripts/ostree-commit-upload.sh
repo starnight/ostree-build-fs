@@ -5,9 +5,13 @@ OSTREE_BRANCH=foo
 OSTREE_SERVER=localhost:2222
 OSTREE_SERVER_USER=ostreejob
 OSTREE_REMOTE_REPO_PATH=/home/${OSTREE_SERVER_USER}/repo
+TARGET=target
+PACKAGES=scripts/bootstrap.packages
+
+mkdir -p ${TARGET}
 
 echo "Build filesystem to path: ${TARGET}"
-./scripts/bootstrap.sh ${TARGET}
+./scripts/bootstrap.sh --root-target ${TARGET} --bootstrap-package-file ${PACKAGES}
 
 echo "Tweak filesystem for OSTree deployment"
 # Follow ostree's Deployments https://ostreedev.github.io/ostree/deployment/
