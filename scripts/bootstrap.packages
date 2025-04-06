@@ -1,2 +1,7 @@
 alpine-base
 mkinitfs
+linux-lts
+linux-firmware-none
+acpi
+syslinux
+ostree
