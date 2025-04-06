@@ -5,9 +5,23 @@ OSTREE_BRANCH=foo
 OSTREE_SERVER=localhost:2222
 OSTREE_SERVER_USER=ostreejob
 OSTREE_REMOTE_REPO_PATH=/home/${OSTREE_SERVER_USER}/repo
+TARGET=target
+PACKAGES=scripts/bootstrap.packages
+
+mkdir -p ${TARGET}
 
 echo "Build filesystem to path: ${TARGET}"
-./scripts/bootstrap.sh ${TARGET}
+./scripts/bootstrap.sh --root-target ${TARGET} --bootstrap-package-file ${PACKAGES}
+
+echo "Add OSTree into initramfs"
+chroot ${TARGET} sh -c "lddtree -l /usr/lib/ostree/ostree-prepare-root > /etc/mkinitfs/features.d/ostree.files"
+grep ostree ${TARGET}/etc/mkinitfs/mkinitfs.conf
+if [ $? -eq 1 ]; then
+  sed -i 's/"$/ ide ostree"/' ${TARGET}/etc/mkinitfs/mkinitfs.conf
+fi
+
+kver=$(ls ${TARGET}/lib/modules)
+chroot ${TARGET} mkinitfs ${kver}
 
 echo "Tweak filesystem for OSTree deployment"
 # Follow ostree's Deployments https://ostreedev.github.io/ostree/deployment/
@@ -18,21 +32,21 @@ mv ${TARGET}/boot/initramfs-* ${TARGET}/lib/modules/${KVER}/initramfs.img
 mv ${TARGET}/boot/* ${TARGET}/lib/modules/${KVER}/
 mv ${TARGET}/etc ${TARGET}/usr/etc
 rm -rvf ${TARGET}/var
-mkdir ${TARGET}/var
+mkdir -p ${TARGET}/var
+mkdir -p ${TARGET}/boot
+mkdir -p ${TARGET}/sysroot
+ln -s /sysroot/ostree ${TARGET}/ostree
 old_path=$(pwd)
 cd ${TARGET}/usr/lib
 ln -s ../../lib/modules modules
 cd ${old_path}
 
-echo "Commit the filesystem as an OSTree commit and push it to the server"
+echo "Commit the filesystem: ${TARGET} as an OSTree commit"
 BUILD_ID=$(date -u +"%Y%m%d_%H%M%S")
 COMMIT_SUBJECT="Build ID: ${BUILD_ID}"
 COMMIT_MSG="OSTree deployed filesystem on branch ${OSTREE_BRANCH}"
-
-echo ${OSTREE_REPO}
-echo ${TARGET}
-echo ${OSTREE_BRANCH}
-
 ostree --repo=${OSTREE_REPO} --mode=archive init
 ostree --repo=${OSTREE_REPO} commit -s "${COMMIT_SUBJECT}" -m "${COMMIT_MSG}" --branch=${OSTREE_BRANCH} ${TARGET}
+
+echo "Push the OSTree commit to repository: ${OSTREE_SERVER}/${OSTREE_REMOTE_REPO_PATH} on branch: ${OSTREE_BRANCH}"
 ostree-push --repo=${OSTREE_REPO} ssh://${OSTREE_SERVER_USER}@${OSTREE_SERVER}/${OSTREE_REMOTE_REPO_PATH} ${OSTREE_BRANCH}
