@@ -46,7 +46,7 @@ esac
 sed -i "/${PATTERN_STR}/a${APPEND_STR}" $ROOT_TARGET/etc/inittab
 
 echo "Deploy fstab"
-install -D data/fstab $ROOT_TARGET/etc/fstab
+install -D data/etc/fstab $ROOT_TARGET/etc/fstab
 mkdir $ROOT_TARGET/boot
 
 echo "Deploy network config"

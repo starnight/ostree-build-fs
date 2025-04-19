@@ -1,0 +1,1 @@
+LABEL=ROOT / ext4  errors=remount-ro 0 0
