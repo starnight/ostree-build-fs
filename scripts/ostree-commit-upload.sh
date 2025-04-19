@@ -19,6 +19,8 @@ grep ostree ${TARGET}/etc/mkinitfs/mkinitfs.conf
 if [ $? -eq 1 ]; then
   sed -i 's/"$/ ide ostree"/' ${TARGET}/etc/mkinitfs/mkinitfs.conf
 fi
+# Use custom initramfs-init for preparing OSTree filesystem
+install -D data/mkinitfs/initramfs-init ${TARGET}/usr/share/mkinitfs/initramfs-init
 
 kver=$(ls ${TARGET}/lib/modules)
 chroot ${TARGET} mkinitfs ${kver}
