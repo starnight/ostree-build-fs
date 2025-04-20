@@ -1,0 +1,18 @@
+#!/sbin/openrc-run
+
+description="Rebuild missed targets for OSTree filesystem"
+
+depend() {
+    need localmount
+    after bootmisc
+}
+
+start() {
+    ebegin "Rebuild missed targets for OSTree filesystem"
+    [ -L /var/home ] || ln -s /sysroot/home /var/home
+    mkdir -p -m 700 /var/roothome
+    mkdir -p /var/opt
+    mkdir -p /var/local
+    mkdir -p /run/media
+    eend $?
+}
