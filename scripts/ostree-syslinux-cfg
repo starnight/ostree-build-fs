@@ -22,7 +22,7 @@ MENU TITLE Alpine/Linux Boot Menu
 MENU AUTOBOOT Alpine will be booted automatically in # seconds
 TIMEOUT 10
 EOF
-cat ${BOOT_DIR}/loader/entries/ostree-*.conf \
+cat $(ls -r ${BOOT_DIR}/loader/entries/ostree-*.conf) \
 	| sed -e '/^aboot.*/d' \
 	| sed -e '/^version .*/d' \
 	| sed -e 's/^title/LABEL/g' \
