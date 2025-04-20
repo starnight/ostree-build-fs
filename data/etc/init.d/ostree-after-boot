@@ -14,5 +14,7 @@ start() {
     mkdir -p /var/opt
     mkdir -p /var/local
     mkdir -p /run/media
+    # Retrieve ostree-booted, which was moved by initramfs-init
+    mv /var/ostree-booted /run/
     eend $?
 }
