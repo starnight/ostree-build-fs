@@ -26,8 +26,13 @@ kver=$(ls ${TARGET}/lib/modules)
 chroot ${TARGET} mkinitfs ${kver}
 
 # Install and enable ostree-after-boot service
-cp -r data/etc/init.d ${TARGET}/etc/
+install -Dm755 data/etc/init.d/ostree-after-boot ${TARGET}/etc/init.d/ostree-after-boot
 chroot ${TARGET} rc-update add ostree-after-boot boot
+
+# Install and enable ostree-finalize-staged service into shutdown runlevel
+install -Dm755 data/etc/init.d/ostree-finalize-staged ${TARGET}/etc/init.d/ostree-finalize-staged
+install -Dm755 scripts/ostree-syslinux-cfg ${TARGET}/usr/bin/ostree-syslinux-cfg
+chroot ${TARGET} rc-update add ostree-finalize-staged shutdown
 
 echo "Tweak filesystem for OSTree deployment"
 # Follow ostree's Deployments https://ostreedev.github.io/ostree/deployment/

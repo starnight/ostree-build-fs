@@ -1,0 +1,20 @@
+#!/sbin/openrc-run
+
+description="OSTree Finalize Staged Deployment"
+
+depend() {
+    need localmount
+    before killprocs
+}
+
+start() {
+    ebegin "OSTree finalize staged deployment"
+    if ! [ -f /run/ostree-booted ]; then
+        eend 0 "System is not booted from an OSTree deployment"
+        return 0
+    fi
+
+    /usr/bin/ostree admin finalize-staged
+    /usr/bin/ostree-syslinux-cfg /boot
+    eend $?
+}
