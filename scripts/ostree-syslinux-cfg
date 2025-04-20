@@ -1,0 +1,31 @@
+#!/bin/sh
+
+usage="Usage: $(basename "$0") [-h] <Boot directory>\n
+Generate syslinux.cfg by parsing the boot loader entry configs deployed by ostree and install it into the boot directory\n
+\n
+where:\n
+\t-h  show this help text"
+
+case $1 in
+  "") echo -e $usage; exit 1;;
+  "-h") echo -e $usage; exit 0;;
+  *)
+esac
+
+BOOT_DIR=$1
+
+SYSLINUX_CFG=${BOOT_DIR}/syslinux.cfg
+cat << EOF > ${SYSLINUX_CFG}
+DEFAULT menu.c32
+PROMPT 0
+MENU TITLE Alpine/Linux Boot Menu
+MENU AUTOBOOT Alpine will be booted automatically in # seconds
+TIMEOUT 10
+EOF
+cat ${BOOT_DIR}/loader/entries/ostree-*.conf \
+	| sed -e '/^aboot.*/d' \
+	| sed -e '/^version .*/d' \
+	| sed -e 's/^title/LABEL/g' \
+	| sed -e 's/^linux/  KERNEL/g' \
+	| sed -e 's/^options/  APPEND/g' \
+	| sed -e 's/^initrd/  INITRD/g' >> ${SYSLINUX_CFG}

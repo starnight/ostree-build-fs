@@ -51,18 +51,5 @@ SYSLINUX_FIRMWARES="libcom32.c32 libutil.c32 mboot.c32 menu.c32 vesamenu.c32"
 for f in ${SYSLINUX_FIRMWARES}; do
   cp ${OSTREE_CURRENT_ROOT}/usr/share/syslinux/$f ${TARGET_ESP_DIR}/
 done
-SYSLINUX_CFG=${TARGET_ESP_DIR}/syslinux.cfg
-cat << EOF > ${SYSLINUX_CFG}
-DEFAULT menu.c32
-PROMPT 0
-MENU TITLE Alpine/Linux Boot Menu
-MENU AUTOBOOT Alpine will be booted automatically in # seconds
-TIMEOUT 10
-EOF
-cat ${TARGET_ESP_DIR}/loader/entries/ostree-*.conf \
-	| sed -e '/^aboot.*/d' \
-	| sed -e '/^version .*/d' \
-	| sed -e 's/^title/LABEL/g' \
-	| sed -e 's/^linux/  KERNEL/g' \
-	| sed -e 's/^options/  APPEND/g' \
-	| sed -e 's/^initrd/  INITRD/g' >> ${SYSLINUX_CFG}
+# Generate syslinux.cfg by parsing boot loader entry confs deployed by ostree
+./scripts/ostree-syslinux-cfg ${TARGET_ESP_DIR}
