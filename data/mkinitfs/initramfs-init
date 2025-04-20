@@ -801,6 +801,10 @@ if [ -n "$KOPT_ostree" ]; then
   ## Pivot the root filesystem to the OSTree deployment
   /usr/lib/ostree/ostree-prepare-root $sysroot
   eend $?
+
+  # /run will be cleaned by OpenRC's bootmisc service. So, move ostree-booted to
+  # /var temporarily. It will be retrieved by ostree-after-boot service later.
+  mv /run/ostree-booted $sysroot/var/
 fi
 
 if $do_networking; then
