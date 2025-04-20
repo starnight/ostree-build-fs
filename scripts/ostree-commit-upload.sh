@@ -25,6 +25,10 @@ install -D data/mkinitfs/initramfs-init ${TARGET}/usr/share/mkinitfs/initramfs-i
 kver=$(ls ${TARGET}/lib/modules)
 chroot ${TARGET} mkinitfs ${kver}
 
+# Install and enable ostree-after-boot service
+cp -r data/etc/init.d ${TARGET}/etc/
+chroot ${TARGET} rc-update add ostree-after-boot boot
+
 echo "Tweak filesystem for OSTree deployment"
 # Follow ostree's Deployments https://ostreedev.github.io/ostree/deployment/
 config_file=$(ls ${TARGET}/boot/config-*)
@@ -33,11 +37,21 @@ mv ${TARGET}/boot/vmlinuz-* ${TARGET}/lib/modules/${KVER}/vmlinuz
 mv ${TARGET}/boot/initramfs-* ${TARGET}/lib/modules/${KVER}/initramfs.img
 mv ${TARGET}/boot/* ${TARGET}/lib/modules/${KVER}/
 mv ${TARGET}/etc ${TARGET}/usr/etc
+rm -rf ${TARGET}/home
+rm -rf ${TARGET}/root
+rm -rf ${TARGET}/opt
+rm -rf ${TARGET}/usr/local
+rm -rf ${TARGET}/media
 rm -rvf ${TARGET}/var
 mkdir -p ${TARGET}/var
 mkdir -p ${TARGET}/boot
 mkdir -p ${TARGET}/sysroot
 ln -s /sysroot/ostree ${TARGET}/ostree
+ln -s /var/home ${TARGET}/home
+ln -s /var/roothome ${TARGET}/root
+ln -s /var/opt ${TARGET}/opt
+ln -s /var/local ${TARGET}/usr/local
+ln -s /run/media ${TARGET}/media
 old_path=$(pwd)
 cd ${TARGET}/usr/lib
 ln -s ../../lib/modules modules
