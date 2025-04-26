@@ -96,3 +96,5 @@ for f in ${SYSLINUX_FIRMWARES}; do
 done
 # Generate syslinux.cfg by parsing boot loader entry confs deployed by ostree
 ./scripts/ostree-syslinux-cfg ${TARGET_ESP_DIR}
+
+umount ${TARGET_ESP_DIR} ${TARGET_DIR}
