@@ -55,7 +55,10 @@ $ podman build -t localhost/source-client:latest . -f docker/source-client.Docke
 ```shell
 $ podman run -it --rm -v ./scripts:/root/scripts -v ./data:/root/data -w /root \
     --network host localhost/source-client:latest sh
-# scripts/ostree-commit-upload.sh
+# scripts/ostree-commit-upload.sh \
+    --user <account, for example ostreejob> \
+    --server <OSTree repository server (SSH port), for example localhost:2222> \
+    --branch <OSTree branch, for example foo>
 ```
 
 Note: You will need to input the user's password to the SSH service of OSTree Repository Server during `ostree-push`. The default user & password are "ostreejob:ostreejob". To avoid type ssh user's password everytime, use `ssh-copy-id` to copy the public key to the sshd server. CI/CD may need this design. More details in [ssh-copy-id Command with Examples](https://linuxopsys.com/ssh-copy-id-command).
