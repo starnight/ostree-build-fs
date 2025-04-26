@@ -7,7 +7,50 @@ OSNAME=alpine
 REPOPATH=${TARGET_DIR}/ostree/repo
 OSTREE_BRANCH=foo
 OSTREE_REMOTE_NAME=${OSNAME}
-OSTREE_SERVER_URL=http://192.168.1.133:8080/repo/
+OSTREE_SERVER_URL=""
+
+usage="Usage: $(basename "$0") [OPTIONS] --url <OSTree repository server's URL>\n
+Pull the OSTree commit from the OSTree server's URL. Then, deploy the OSTree
+commit into the parted disk image's filesystem.\n
+\n
+Options:\n
+\t-u, --url\tThe OSTree repository server's URL.\n
+\t\t\tFor example: http://foo.bar/repo/\n
+\t-b, --branch\tThe OSTree branch. Default branch is \"${OSTREE_BRANCH}\".\n
+\t-o, --output\tCreate a disk image as the file.\n
+\t\t\tDefault file is \"${TARGET_DISK}\".\n
+\t-h, --help\tshow this help text"
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -u|--url)
+      OSTREE_SERVER_URL="$2"
+      shift 2  # Move past the option and its value
+      ;;
+    -b|--branch)
+      OSTREE_BRANCH="$2"
+      shift 2
+      ;;
+    -o|--output)
+      TARGET_DISK="$2"
+      shift 2
+      ;;
+    -h|--help)
+      echo -e $usage
+      exit 0
+      ;;
+    *)
+      echo "Error: Unknown option: $1"
+      echo -e $usage
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z "${OSTREE_SERVER_URL}" ]; then
+  echo "Error: OSTree repository server's URL (--url option) is empty!"
+  exit 1
+fi
 
 echo "Prepare storage"
 dd if=/dev/zero of=${TARGET_DISK} bs=16M count=64
