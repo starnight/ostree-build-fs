@@ -93,7 +93,10 @@ $ qemu-system-x86_64 -m 512 -nic user -hda <path to the downloaded alpine.qcow2>
 
 Here is the example to generate the `disk.img` in RAW format:
 ```shell
-# scripts/make-image.sh
+# scripts/make-image.sh \
+    --url <OSTree repository server's URL, for example http://foo.bar/repo/> \
+    --branch <OSTree branch, for example foo> \
+    --output <Output disk image's filename, for example disk.img>
 ```
 Note: If the OSTree commit has not been signed by a vailable GPG key, for example in development environment, then it will hit error: GPG verification enabled, but no signatures found: `GPG verification enabled, but no signatures found`.
 ```log
