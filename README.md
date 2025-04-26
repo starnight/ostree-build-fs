@@ -55,7 +55,7 @@ $ podman build -t localhost/source-client:latest . -f docker/source-client.Docke
 ```shell
 $ podman run -it --rm -v ./scripts:/root/scripts -v ./data:/root/data -w /root \
     --network host localhost/source-client:latest sh
-# scripts/ostree-commit-upload.sh \
+# scripts/ostree-commit-push.sh \
     --user <account, for example ostreejob> \
     --server <OSTree repository server (SSH port), for example localhost:2222> \
     --branch <OSTree branch, for example foo>
