@@ -8,6 +8,44 @@ OSTREE_REMOTE_REPO_PATH=/home/${OSTREE_SERVER_USER}/repo
 TARGET=target
 PACKAGES=scripts/bootstrap.packages
 
+usage="Usage: $(basename "$0") [OPTIONS]\n
+Boostrap an Alpine root filesystem in \"./target\" directory. Then, make it as
+an OSTree commit and push the commit to the OSTree repository server.\n
+\n
+Options:\n
+\t-u, --user\tThe login user of the OSTree repository server.\n
+\t\t\tDefault user is \"${OSTREE_SERVER_USER}\".\n
+\t-s, --server\tThe IP, or server name (SSH port) of the OSTree repository server.\n
+\t\t\tDefault server is \"${OSTREE_SERVER}\".\n
+\t-b, --branch\tThe OSTree branch. Default branch is \"${OSTREE_BRANCH}\".\n
+\t-h, --help\tshow this help text"
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -u|--user)
+      OSTREE_SERVER_USER="$2"
+      shift 2  # Move past the option and its value
+      ;;
+    -s|--server)
+      OSTREE_SERVER="$2"
+      shift 2
+      ;;
+    -b|--branch)
+      OSTREE_BRANCH="$2"
+      shift 2
+      ;;
+    -h|--help)
+      echo -e $usage
+      exit 0
+      ;;
+    *)
+      echo "Error: Unknown option: $1"
+      echo -e $usage
+      exit 1
+      ;;
+  esac
+done
+
 mkdir -p ${TARGET}
 
 echo "Build filesystem to path: ${TARGET}"
