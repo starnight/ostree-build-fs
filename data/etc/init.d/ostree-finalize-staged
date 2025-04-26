@@ -14,6 +14,12 @@ start() {
         return 0
     fi
 
+    found=$(/usr/bin/ostree admin status | grep "pending")
+    if [ -z "${found}" ]; then
+        eend 0
+        return 0
+    fi
+
     /usr/bin/ostree admin finalize-staged
     /usr/bin/ostree-syslinux-cfg /boot
     eend $?
