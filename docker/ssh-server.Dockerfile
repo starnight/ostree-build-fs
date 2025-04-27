@@ -1,7 +1,6 @@
 FROM docker.io/library/alpine:edge
 
-RUN head -n 1 /etc/apk/repositories | sed -e 's/main$/testing/' >> /etc/apk/repositories \
-    && apk update \
+RUN apk update \
     && apk add --no-cache ostree ostree-push openssh-server \
     && ssh-keygen -A \
     && adduser -G root ostreejob -D \
