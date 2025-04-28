@@ -59,6 +59,21 @@ cp /etc/apk/repositories $ROOT_TARGET/etc/apk/repositories
 
 echo "Change Root"
 # Enable services
+chroot $ROOT_TARGET rc-update add acpid default
+chroot $ROOT_TARGET rc-update add bootmisc boot
+chroot $ROOT_TARGET rc-update add crond default
+chroot $ROOT_TARGET rc-update add devfs sysinit
+chroot $ROOT_TARGET rc-update add dmesg sysinit
+chroot $ROOT_TARGET rc-update add hostname boot
+chroot $ROOT_TARGET rc-update add hwclock boot
+chroot $ROOT_TARGET rc-update add hwdrivers sysinit
+chroot $ROOT_TARGET rc-update add killprocs shutdown
+chroot $ROOT_TARGET rc-update add mdev sysinit
+chroot $ROOT_TARGET rc-update add modules boot
+chroot $ROOT_TARGET rc-update add mount-ro shutdown
+chroot $ROOT_TARGET rc-update add networking boot
+chroot $ROOT_TARGET rc-update add savecache shutdown
+chroot $ROOT_TARGET rc-update add seedrng boot
+chroot $ROOT_TARGET rc-update add swap boot
 chroot $ROOT_TARGET rc-update add syslog boot
-chroot $ROOT_TARGET rc-update add networking
 chroot $ROOT_TARGET rc-update add ntpd
