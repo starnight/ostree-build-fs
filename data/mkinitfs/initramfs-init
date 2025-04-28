@@ -824,43 +824,6 @@ if [ "$SINGLEMODE" = "yes" ]; then
 	sh
 fi
 
-if [ -f "$sysroot/etc/.default_boot_services" -o ! -f "$ovl" ]; then
-	# add some boot services by default
-	rc_add devfs sysinit
-	rc_add dmesg sysinit
-	rc_add mdev sysinit
-	rc_add hwdrivers sysinit
-	rc_add modloop sysinit
-
-	rc_add modules boot
-	rc_add sysctl boot
-	rc_add hostname boot
-	rc_add bootmisc boot
-	rc_add syslog boot
-
-	rc_add mount-ro shutdown
-	rc_add killprocs shutdown
-	rc_add savecache shutdown
-
-	rc_add firstboot default
-
-	# add openssh
-	if [ -n "$KOPT_ssh_key" ]; then
-		pkgs="$pkgs openssh"
-		rc_add sshd default
-	fi
-
-	if want_tiny_cloud; then
-		pkgs="$pkgs tiny-cloud ifupdown-ng doas"
-		rc_add tiny-cloud-boot boot
-		rc_add tiny-cloud-early default
-		rc_add tiny-cloud-main default
-		rc_add tiny-cloud-final default
-	fi
-
-	rm -f "$sysroot/etc/.default_boot_services"
-fi
-
 if [ "$KOPT_splash" != "no" ]; then
 	echo "IMG_ALIGN=CM" > /tmp/fbsplash.cfg
 	for fbdev in /dev/fb[0-9]; do
