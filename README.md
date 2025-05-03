@@ -38,6 +38,8 @@ According to [docker/server-cluster.yaml](docker/server-cluster.yaml), the clust
 
 Note: Other container tools are available, too. For example, `docker` and `docker-compose`.
 
+Note: Please ensure firewall rules are properly configured.
+
 ## OSTree Source Commit Client
 
 Build a new OSTree Commit on a client
