@@ -21,6 +21,8 @@ flowchart LR
 
 This could be an example of how to build an OSTree maintained Linux distribution.
 
+Source code: https://github.com/starnight/ostree-build-fs
+
 ## Have an OSTree Repository Server
 
 Use `podman` as the container tool, and `podman-compose` as the compose tool.
