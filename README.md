@@ -67,6 +67,20 @@ $ podman run -it --rm -v ./scripts:/root/scripts -v ./data:/root/data -w /root \
 
 Note: You will need to input the user's password to the SSH service of OSTree Repository Server during `ostree-push`. The default user & password are "ostreejob:ostreejob". To avoid type ssh user's password everytime, use `ssh-copy-id` to copy the public key to the sshd server. CI/CD may need this design. More details in [ssh-copy-id Command with Examples](https://linuxopsys.com/ssh-copy-id-command).
 
+According to [ostree-push's Operation](https://github.com/dbnicholson/ostree-push?tab=readme-ov-file#operation), draw the description as the following sequence diagram:
+```mermaid
+sequenceDiagram
+  participant srccommit as OSTree Source Commit Client
+  participant ostreeserver as OSTree Repository Server
+  srccommit->>+srccommit: ostree-push starts a local HTTP server
+  srccommit->>ostreeserver: ostree-push initiates an SSH connection and builds an SSH tunnel
+  critical tunnels the HTTP server port through the SSH connection
+    ostreeserver->>+srccommit: ostree-receive pulls the OSTree commit over HTTP request
+    srccommit-->>-ostreeserver: HTTP response
+  end
+  srccommit->>-srccommit: ostree-push stops the local HTTP server
+```
+
 ## Image Builder
 
 ### Prepare
