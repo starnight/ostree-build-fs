@@ -5,7 +5,7 @@ TARGET_ESP_DIR=${TARGET_DIR}/boot
 TARGET_DISK=$(pwd)/disk.img
 OSNAME=alpine
 REPOPATH=${TARGET_DIR}/ostree/repo
-OSTREE_BRANCH=foo
+OSTREE_BRANCH=os/$(uname -m)/main
 OSTREE_REMOTE_NAME=${OSNAME}
 OSTREE_SERVER_URL=""
 

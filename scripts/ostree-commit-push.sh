@@ -1,7 +1,7 @@
 #!/bin/sh
 
 OSTREE_REPO=repo
-OSTREE_BRANCH=foo
+OSTREE_BRANCH=os/$(uname -m)/main
 OSTREE_SERVER=localhost:2222
 OSTREE_SERVER_USER=ostreejob
 OSTREE_REMOTE_REPO_PATH=/home/${OSTREE_SERVER_USER}/repo
@@ -100,7 +100,7 @@ cd ${TARGET}/usr/lib
 ln -s ../../lib/modules modules
 cd ${old_path}
 
-echo "Commit the filesystem: ${TARGET} as an OSTree commit"
+echo "Commit the filesystem: ${TARGET} as an OSTree commit on branch ${OSTREE_BRANCH}"
 BUILD_ID=$(date -u +"%Y%m%d_%H%M%S")
 COMMIT_SUBJECT="Build ID: ${BUILD_ID}"
 COMMIT_MSG="OSTree deployed filesystem on branch ${OSTREE_BRANCH}"
