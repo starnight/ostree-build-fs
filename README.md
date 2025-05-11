@@ -75,7 +75,7 @@ sequenceDiagram
   srccommit->>+srccommit: ostree-push starts a local HTTP server
   srccommit->>ostreeserver: ostree-push initiates an SSH connection and builds an SSH tunnel
   critical SSH tunnel
-    ostreeserver->>+srccommit: ostree-receive to pull the OSTree commit over HTTP request
+    ostreeserver->>+srccommit: ostree-receive pulls the OSTree commit over HTTP request
     srccommit-->>-ostreeserver: HTTP response
   end
   srccommit->>-srccommit: ostree-push stops the local HTTP server
