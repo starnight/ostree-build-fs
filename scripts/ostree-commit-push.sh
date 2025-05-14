@@ -52,7 +52,6 @@ echo "Build filesystem to path: ${TARGET}"
 ./scripts/bootstrap.sh --root-target ${TARGET} --bootstrap-package-file ${PACKAGES}
 
 echo "Add OSTree into initramfs"
-chroot ${TARGET} sh -c "lddtree -l /usr/lib/ostree/ostree-prepare-root > /etc/mkinitfs/features.d/ostree.files"
 grep ostree ${TARGET}/etc/mkinitfs/mkinitfs.conf
 if [ $? -eq 1 ]; then
   sed -i 's/"$/ ide ostree"/' ${TARGET}/etc/mkinitfs/mkinitfs.conf

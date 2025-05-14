@@ -5,3 +5,4 @@ linux-firmware-none
 acpi
 syslinux
 ostree
+ostree-mkinitfs
