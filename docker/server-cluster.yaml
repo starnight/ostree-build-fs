@@ -2,7 +2,7 @@ version: "3"
 services:
   web:
     container_name: 'ostree-web'
-    image: docker.io/library/nginx:mainline-alpine-slim
+    image: docker.io/library/nginx:stable-alpine-slim
     ports:
       - '8080:80'
     volumes:
