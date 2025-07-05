@@ -14,18 +14,21 @@ esac
 
 BOOT_DIR=$1
 
-SYSLINUX_CFG=${BOOT_DIR}/syslinux.cfg
+BOOT_SYSLINUX_DIR=${BOOT_DIR}/syslinux
+SYSLINUX_CFG=${BOOT_SYSLINUX_DIR}/syslinux.cfg
+mkdir -p ${BOOT_SYSLINUX_DIR}
 cat << EOF > ${SYSLINUX_CFG}
-DEFAULT menu.c32
+UI menu.c32
 PROMPT 0
 MENU TITLE Alpine/Linux Boot Menu
 MENU AUTOBOOT Alpine will be booted automatically in # seconds
 TIMEOUT 10
+
 EOF
 cat $(ls -r ${BOOT_DIR}/loader/entries/ostree-*.conf) \
 	| sed -e '/^aboot.*/d' \
 	| sed -e '/^version .*/d' \
 	| sed -e 's/^title/LABEL/g' \
-	| sed -e 's/^linux/  KERNEL/g' \
-	| sed -e 's/^options/  APPEND/g' \
-	| sed -e 's/^initrd/  INITRD/g' >> ${SYSLINUX_CFG}
+	| sed -e 's/^linux/\tKERNEL/g' \
+	| sed -e 's/^options/\tAPPEND/g' \
+	| sed -e 's/^initrd/\tINITRD/g' >> ${SYSLINUX_CFG}

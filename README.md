@@ -147,12 +147,13 @@ Check the OSTree status:
 * alpine f0fd1d6b50fc2eb390dd7088ecad6357606aa397cf27e6c8537d0051dd65e5a3.0
     origin refspec: alpine:os/x86_64/main
 ```
-The new OSTree will be shown as "pending" and used for next boot by default.
+The new OSTree will be shown as "pending" and used for next boot by default. And, this `ostree admin upgrade` detects the bootloader syslinux and generates a new bootloader's config as `/boot/loader/syslinux.cfg`.
 
-Then, of course, reboot the system! During poweroff, the customized OpenRC service `ostree-finalize-staged` will finalize the OSTree commit deployment by `ostree admin finalize-staged` and update the bootloader's config (`/boot/syslinux.cfg`) automatically. The new deployed environment will be the default item on the bootloader's menu. Finally, system boots into the new OSTree commit deployed environment.
+Then, of course, reboot the system! During poweroff, the customized OpenRC service `ostree-finalize-staged` will finalize the OSTree commit deployment by `ostree admin finalize-staged` and update the bootloader's config (`/boot/syslinux/syslinux.cfg`) with the new `/boot/loader/syslinux.cfg` automatically. The new deployed environment will be the default item on the bootloader's menu. Finally, system boots into the new OSTree commit deployed environment.
 ![bootloader-menu](images/bootloader-menu.png)
 
 ## Reference
 
 * [ostree](https://ostreedev.github.io/ostree/introduction/)
 * [ostree-push](https://github.com/dbnicholson/ostree-push)
+* [ostree.repo-config — OSTree repository configuration](https://ostreedev.github.io/ostree/man/ostree.repo-config.html)
