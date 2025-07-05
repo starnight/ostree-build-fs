@@ -14,13 +14,13 @@ start() {
         return 0
     fi
 
-    found=$(/usr/bin/ostree admin status | grep "pending")
-    if [ -z "${found}" ]; then
+    NEW_SYSLINUX_CFG="/boot/loader/syslinux.cfg"
+    if ! [ -f ${NEW_SYSLINUX_CFG} ]; then
         eend 0
         return 0
     fi
 
     /usr/bin/ostree admin finalize-staged
-    /usr/bin/ostree-syslinux-cfg /boot
+    mv ${NEW_SYSLINUX_CFG} /boot/syslinux/
     eend $?
 }
