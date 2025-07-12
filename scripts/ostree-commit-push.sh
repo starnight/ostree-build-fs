@@ -6,7 +6,10 @@ OSTREE_SERVER=localhost
 SSH_PORT=2222
 HTTP_PORT=8080
 OSTREE_SERVER_USER=ostreejob
-OSTREE_REMOTE_REPO_PATH=/home/${OSTREE_SERVER_USER}/repo
+OSTREE_REMOTE_REPO_PATH=repo
+OSTREE_REMOTE_REPO_FULL_PATH=/home/${OSTREE_SERVER_USER}/${OSTREE_REMOTE_REPO_PATH}
+OSNAME=alpine
+OSTREE_REMOTE_NAME=${OSNAME}
 TARGET=target
 PACKAGES=scripts/bootstrap.packages
 
@@ -112,12 +115,19 @@ cd ${TARGET}/usr/lib
 ln -s ../../lib/modules modules
 cd ${old_path}
 
+OSTREE_SERVER_URL=http://${OSTREE_SERVER}:${HTTP_PORT}/${OSTREE_REMOTE_REPO_PATH}
+echo "Pull commits on branch ${OSTREE_BRANCH} from OSTree repository server ${OSTREE_SERVER_URL}"
+if ! [ -d "${OSTREE_REPO}" ]; then
+  ostree --repo=${OSTREE_REPO} --mode=archive init
+  ostree --repo="${OSTREE_REPO}" remote add ${OSTREE_REMOTE_NAME} ${OSTREE_SERVER_URL} ${OSTREE_BRANCH} --no-gpg-verify
+fi
+ostree --repo="${OSTREE_REPO}" pull ${OSTREE_REMOTE_NAME} ${OSTREE_BRANCH}
+
 echo "Commit the filesystem: ${TARGET} as an OSTree commit on branch ${OSTREE_BRANCH}"
 BUILD_ID=$(date -u +"%Y%m%d_%H%M%S")
 COMMIT_SUBJECT="Build ID: ${BUILD_ID}"
 COMMIT_MSG="OSTree deployed filesystem on branch ${OSTREE_BRANCH}"
-ostree --repo=${OSTREE_REPO} --mode=archive init
 ostree --repo=${OSTREE_REPO} commit -s "${COMMIT_SUBJECT}" -m "${COMMIT_MSG}" --branch=${OSTREE_BRANCH} ${TARGET}
 
-echo "Push the OSTree commit to repository: ${OSTREE_SERVER}:${SSH_PORT}/${OSTREE_REMOTE_REPO_PATH} on branch: ${OSTREE_BRANCH}"
-ostree-push --repo=${OSTREE_REPO} ssh://${OSTREE_SERVER_USER}@${OSTREE_SERVER}:${SSH_PORT}/${OSTREE_REMOTE_REPO_PATH} ${OSTREE_BRANCH}
+echo "Push the OSTree commit to repository: ${OSTREE_SERVER}:${SSH_PORT}/${OSTREE_REMOTE_REPO_FULL_PATH} on branch: ${OSTREE_BRANCH}"
+ostree-push --repo=${OSTREE_REPO} ssh://${OSTREE_SERVER_USER}@${OSTREE_SERVER}:${SSH_PORT}/${OSTREE_REMOTE_REPO_FULL_PATH} ${OSTREE_BRANCH}
