@@ -2,7 +2,9 @@
 
 OSTREE_REPO=repo
 OSTREE_BRANCH=os/$(uname -m)/main
-OSTREE_SERVER=localhost:2222
+OSTREE_SERVER=localhost
+SSH_PORT=2222
+HTTP_PORT=8080
 OSTREE_SERVER_USER=ostreejob
 OSTREE_REMOTE_REPO_PATH=/home/${OSTREE_SERVER_USER}/repo
 TARGET=target
@@ -15,8 +17,12 @@ an OSTree commit and push the commit to the OSTree repository server.\n
 Options:\n
 \t-u, --user\tThe login user of the OSTree repository server.\n
 \t\t\tDefault user is \"${OSTREE_SERVER_USER}\".\n
-\t-s, --server\tThe IP, or server name (SSH port) of the OSTree repository server.\n
+\t-s, --server\tThe IP, or server name of the OSTree repository server.\n
 \t\t\tDefault server is \"${OSTREE_SERVER}\".\n
+\t-sp, --ssh-port\tThe OSTree repository server's listening SSH port.\n
+\t\t\tDefault SSH port is \"${SSH_PORT}\".\n
+\t-hp, --http-port\tThe OSTree repository server's listening HTTP port.\n
+\t\t\tDefault HTTP port is \"${HTTP_PORT}\".\n
 \t-b, --branch\tThe OSTree branch. Default branch is \"${OSTREE_BRANCH}\".\n
 \t-h, --help\tshow this help text"
 
@@ -28,6 +34,14 @@ while [ "$#" -gt 0 ]; do
       ;;
     -s|--server)
       OSTREE_SERVER="$2"
+      shift 2
+      ;;
+    -sp|--ssh-port)
+      SSH_PORT="$2"
+      shift 2
+      ;;
+    -hp|--http-port)
+      HTTP_PORT="$2"
       shift 2
       ;;
     -b|--branch)
@@ -105,5 +119,5 @@ COMMIT_MSG="OSTree deployed filesystem on branch ${OSTREE_BRANCH}"
 ostree --repo=${OSTREE_REPO} --mode=archive init
 ostree --repo=${OSTREE_REPO} commit -s "${COMMIT_SUBJECT}" -m "${COMMIT_MSG}" --branch=${OSTREE_BRANCH} ${TARGET}
 
-echo "Push the OSTree commit to repository: ${OSTREE_SERVER}/${OSTREE_REMOTE_REPO_PATH} on branch: ${OSTREE_BRANCH}"
-ostree-push --repo=${OSTREE_REPO} ssh://${OSTREE_SERVER_USER}@${OSTREE_SERVER}/${OSTREE_REMOTE_REPO_PATH} ${OSTREE_BRANCH}
+echo "Push the OSTree commit to repository: ${OSTREE_SERVER}:${SSH_PORT}/${OSTREE_REMOTE_REPO_PATH} on branch: ${OSTREE_BRANCH}"
+ostree-push --repo=${OSTREE_REPO} ssh://${OSTREE_SERVER_USER}@${OSTREE_SERVER}:${SSH_PORT}/${OSTREE_REMOTE_REPO_PATH} ${OSTREE_BRANCH}
