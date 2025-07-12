@@ -61,7 +61,9 @@ $ podman run -it --rm -v ./scripts:/root/scripts -v ./data:/root/data -w /root \
     --network host localhost/source-client:latest sh
 # scripts/ostree-commit-push.sh \
     --user <account, for example ostreejob> \
-    --server <OSTree repository server (SSH port), for example localhost:2222> \
+    --server <OSTree repository server, for example "localhost"> \
+    --ssh-port <OSTree repository server's SSH port, for example 2222> \
+    --http-port <OSTree repository server's HTTP port, for example 8080> \
     --branch <OSTree branch, for example foo>
 ```
 
