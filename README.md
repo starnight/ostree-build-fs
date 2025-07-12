@@ -54,8 +54,9 @@ $ podman build -t localhost/source-client:latest . -f docker/source-client.Docke
 ### Build a New OSTree Commit, and Ship It
 
 1. Run a container with `source-client` image to bootstrap an Alpine root filesystem to the local folder: `target`
-2. Make the root filesystem as a new OSTree commit
-3. `ostree-push` the OSTree commit to the OSTree Repository Server:
+2. Synchronize from the OSTree Repository Server to the local OSTree repository.
+3. Make the root filesystem as a new OSTree commit
+4. `ostree-push` the OSTree commit to the OSTree Repository Server:
 ```shell
 $ podman run -it --rm -v ./scripts:/root/scripts -v ./data:/root/data -w /root \
     --network host localhost/source-client:latest sh
@@ -64,7 +65,7 @@ $ podman run -it --rm -v ./scripts:/root/scripts -v ./data:/root/data -w /root \
     --server <OSTree repository server, for example "localhost"> \
     --ssh-port <OSTree repository server's SSH port, for example 2222> \
     --http-port <OSTree repository server's HTTP port, for example 8080> \
-    --branch <OSTree branch, for example foo>
+    --branch <OSTree branch, for example "os/x86_64/main">
 ```
 
 Note: You will need to input the user's password to the SSH service of OSTree Repository Server during `ostree-push`. The default user & password are "ostreejob:ostreejob". To avoid type ssh user's password everytime, use `ssh-copy-id` to copy the public key to the sshd server. CI/CD may need this design. More details in [ssh-copy-id Command with Examples](https://linuxopsys.com/ssh-copy-id-command).
