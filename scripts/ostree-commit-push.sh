@@ -79,6 +79,21 @@ install -D data/mkinitfs/initramfs-init ${TARGET}/usr/share/mkinitfs/initramfs-i
 kver=$(ls ${TARGET}/lib/modules)
 chroot ${TARGET} mkinitfs ${kver}
 
+# Link /(s)bin to /usr/(s)bin as workaround of
+# https://gitlab.alpinelinux.org/alpine/aports/-/issues/16462
+echo "Link /(s)bin to /usr/(s)bin"
+mv ${TARGET}/bin/* ${TARGET}/usr/bin/
+mv ${TARGET}/sbin/* ${TARGET}/usr/sbin/
+rm -rf ${TARGET}/bin ${TARGET}/sbin
+ln -s usr/bin ${TARGET}/bin
+ln -s usr/sbin ${TARGET}/sbin
+ln -sf /usr/bin/kmod ${TARGET}/sbin/depmod
+ln -sf /usr/bin/kmod ${TARGET}/sbin/insmod
+ln -sf /usr/bin/kmod ${TARGET}/sbin/lsmod
+ln -sf /usr/bin/kmod ${TARGET}/sbin/modinfo
+ln -sf /usr/bin/kmod ${TARGET}/sbin/modprobe
+ln -sf /usr/bin/kmod ${TARGET}/sbin/rmmod
+
 # Install and enable ostree-after-boot service
 install -Dm755 data/etc/init.d/ostree-after-boot ${TARGET}/etc/init.d/ostree-after-boot
 chroot ${TARGET} rc-update add ostree-after-boot boot
